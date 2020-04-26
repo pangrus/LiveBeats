@@ -384,9 +384,9 @@
 
 			cmds.message("livebeats - peal edition");
 			cmds.message("");
-			cmds.message("type 'help'  to get started");
-			cmds.message("type 'F1-F8' to start exploring");
-			cmds.message("");
+			cmds.message("type 'help' to get started");
+			cmds.message("press 'F1-F8' for some command examples");
+						
 			lastTime = 0;
 			document.addEventListener("dragover", DragOver, false);
 			document.addEventListener("drop", FileDrop, false);
@@ -1944,7 +1944,7 @@
 		function Commands() {
 			this.cursor = 0;
 			this.log = [];
-			this.log.push("- ");
+			this.log.push("");
 			this.hist = [];
 			this.histcur = 0;
 			this.rows = 30;
