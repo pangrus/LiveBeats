@@ -4,13 +4,11 @@
 <head>
 	<meta charset="UTF-8">
 	<title>livebeats</title>
-
 	<style>
 		body {
 			margin: 0;
 			padding: 0;
 		}
-
 		#urlpane {
 			display: none;
 			position: absolute;
@@ -23,13 +21,11 @@
 			padding: 0;
 			border: none;
 		}
-
 		#url {
 			margin-top: 20px;
 			width: 100%;
 			height: 100px;
 		}
-
 		#mess {
 			position: absolute;
 			left: 0;
@@ -42,7 +38,6 @@
 </head>
 
 <body onload="Init()" style="background:#000">
-
 	<script type="text/javascript" src="./plugin_txt.js"></script>
 	<script type="text/javascript" src="./plugin_wave.js"></script>
 	<script type="text/javascript" src="./plugin_cam.js"></script>
@@ -132,11 +127,11 @@
 			"cam.a=1;cam.h=.3;cam.w=.2;cam.x=.88;cam.y=.2", 
 			"wav.type=2;wav.hue=lfo32;wav.a=1;wav.z=.5+lfo32",
 			"drop.a=0.5;drop.type=3;drop.hue=.7",
-			"bdo.s=s5;bdo.v=1;noise.s=crrr rrrr rrrr rrcr;hho.v=1",
+			"fm1.s=s5;fm1.v=1;noise.s=crrr rrrr rrrr rrcr;noise.v=1",
 			"o1.s=c;o2.s=c;o3.s=c;o1.f=110.05;o2.f=109.97;o3.f=110.3",
 			"o5.s=s20;o5.delay=1;o5.c=lfo128*3+3",
 			"master.g=0102030405060708",
-			"cam.a=0;wav.a=0;drop.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;bdo.s=;master.g=0",
+			"cam.a=0;wav.a=0;drop.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;fm1.s=;master.g=0",
 		];
 
 		function Trigger(instrument, accent, when) {
@@ -348,27 +343,24 @@
 			dmx = new DMX();
 			delay = new Delay();
 
-			o1 = new OSC(110, 0.5, 1, out);
-			o2 = new OSC(110, 0.5, 1, out);
-			o3 = new OSC(110, 0.5, 1, out);
-			o4 = new OSC(110, 0.5, 1, out);
-			o5 = new OSC(220, 0.5, 1, out);
-			o6 = new OSC(220, 0.5, 1, out);
-			o7 = new OSC(440, 0.5, 1, out);
-			o8 = new OSC(440, 0.5, 1, out);
+			//Oscillator definitions
+			o1 = new Oscillator(110, 0.5, 1, out);
+			o2 = new Oscillator(110, 0.5, 1, out);
+			o3 = new Oscillator(110, 0.5, 1, out);
+			o4 = new Oscillator(110, 0.5, 1, out);
+			o5 = new Oscillator(220, 0.5, 1, out);
+			o6 = new Oscillator(220, 0.5, 1, out);
+			o7 = new Oscillator(440, 0.5, 1, out);
+			o8 = new Oscillator(440, 0.5, 1, out);
 
-			//bdo = new FMO(115, .1, .1, .2, 0, 230, .1, 2670, .02, 0, 300, .1, 1303, .1, 0, .5);
-			
-			bdo = new FMO(115, .1, .1, .2, 0, 230, .1, 2670, .02, 0, 300, .1, 1303, .1, 0, .5);
-			
-			sdo = new FMO(213, 1, .8, .1, 0, 723, 1, 2912, .6, 0, 140, 1, 800, .1, 0, .5);
-			hho = new FMO(2233, 1, .5, .03, 0, 423, 1, 3120, .07, 2, 552, 1, 1800, .02, 1, .5);
-			cyo = new FMO(2612, 1, .1, .1, 0, 1826, 1, 4219, 5, 2, 3897, 1, 1401, 1, 2, .5);
+			//Oscillator definitions
+		 	fm1 = new Fm_Oscillator(115, .1, .8, .2, 0, 230, .1, 2670, .02, 0, 300, .1, 1303, .1, 0, .5);
+		 	fm3 = new Fm_Oscillator(2233, 1, .3, .03, 0, 823, .1, 3120, .07, 0, 552, .1, 1800, .02, 0, .5);
+			fm2 = new Fm_Oscillator(300,  2, .5, .1, 0, 1723, 1, 4912, .6, 0, 2140, 1, 3800, .1, 0, .5);
+			fm4 = new Fm_Oscillator(2612, 1, .3, .1, 0, 1826, 1, 4219, 3, 2, 3897, 1, 1401, 1, 2, .5);
 			
 			noise = new Noise(440, 0.8, out);
-			
 			speech = new Speech();
-
 			cmds = new Commands();
 			video = new Video();
 
@@ -381,7 +373,6 @@
 			window.document.addEventListener("mouseup", MouseEvent);
 
 			Reset();
-
 			cmds.message("livebeats - peal edition");
 			cmds.message("");
 			cmds.message("type 'help' to get started");
@@ -498,7 +489,7 @@
 
 		function Reset() {
 			o1.step = o2.step = o3.step = o4.step = o5.step = o6.step = o7.step = o8.step = 0;
-			bdo.step = sdo.step = hho.step = cyo.step = 0;
+			fm1.step = fm2.step = fm3.step = fm4.step = 0;
 			cnt = 0;
 			lfo1 = lfo2 = lfo4 = lfo8 = lfo16 = lfo32 = lfo48 = lfo64 = 0;
 			beat4 = beat8 = beat16 = beat32 = beat64 = 0;
@@ -525,7 +516,7 @@
 
 		function oscdesc(o, nam) {
 			var r;
-			r = nam + ".s (note):" + o.s + "\n";
+			r = nam + ".s (sequence):" + o.s + "\n";
 			r += nam + ".g (gate):" + o.g + "\n";
 			r += nam + ".v (volume):" + o.v + "\n";
 			r += nam + ".f (freq):" + o.f + "\n";
@@ -534,20 +525,31 @@
 			r += nam + ".d (decay):" + o.d + "\n";
 			r += nam + ".porta (portamento):" + o.porta + "\n";
 			r += nam + ".dist (distortion):" + o.dist + "\n";
-			r += nam + ".delay :" + o.delay + "\n";
-			r += nam + ".wav:" + o.wav + "\n";
-			r += nam + ".type:" + o.type + "\n";
-			r += nam + ".pan:" + o.pan + "\n";
-			r += nam + ".out:" + o.out + "\n";
+			r += nam + ".delay (delay):" + o.delay + "\n";
+			r += nam + ".type (0-sine 1-square 2-saw 3-triangle 4-custom):" + o.type + "\n";
+			r += nam + ".wav (custom wave):" + o.wav + "\n";
+			r += nam + ".pan (panpot):" + o.pan + "\n";
+		//	r += nam + ".out: " + o.out + "\n";
 			return r;
 		}
 
 		function fmodesc(o, nam) {
 			var r;
-			r = nam + ".s (step):" + o.s + "\n";
-			r += nam + ".v (volume):" + o.v + "\n";
-			r += nam + ".pan:" + o.pan;
-			return r;
+			r  = nam + ".s  (sequence):" + o.s + "\n";
+			r += nam + ".f3 (frequency):" + o.f3 +"\n";
+			r += nam + ".p3 (pitch mod):" + o.p3 +"\n";
+			r += nam + ".r3 (rate mod):" + o.r3 +"\n";
+			r += nam + ".v3 (volume):" + o.v3 +"\n";
+			r += nam + ".f2 (frequency):" + o.f2 +"\n";
+			r += nam + ".p2 (pitch mod):" + o.p2 +"\n";
+			r += nam + ".r2 (rate mod):" + o.r2 +"\n";
+			r += nam + ".v2 (volume):" + o.v2 +"\n";
+			r += nam + ".f1 (frequency):" + o.f1 +"\n";
+			r += nam + ".p1 (pitch mod):" + o.p1 +"\n";
+			r += nam + ".r1 (rate mod):" + o.r1 +"\n";
+			r += nam + ".v  (volume):" + o.v +"\n";
+			r += nam + ".pan (panpot) :" + o.pan +"\n";
+	        return r;
 		}
 
 		function Parse0(s) {
@@ -562,14 +564,14 @@
 						pparam[pname] = r;
 					}
 				}
-				if (l.indexOf("bdo.") == 0)
-					fmo = bdo;
-				else if (l.indexOf("sdo.") == 0)
-					fmo = sdo;
-				else if (l.indexOf("hho.") == 0)
-					fmo = hho;
-				else if (l.indexOf("cyo.") == 0)
-					fmo = cyo;
+				if (l.indexOf("fm1.") == 0)
+					fmo = fm1;
+				else if (l.indexOf("fm2.") == 0)
+					fmo = fm2;
+				else if (l.indexOf("fm3.") == 0)
+					fmo = fm3;
+				else if (l.indexOf("fm4.") == 0)
+					fmo = fm4;
 
 				if (fmo) {
 					switch (l.substr(4)) {
@@ -719,7 +721,7 @@
 				if (o.porta != o.defporta)
 					s += "o" + i + ".porta=" + encodeURIComponent(o.porta) + "&";
 			}
-			var otab = ["bdo", "sdo", "hho", "cyo"];
+			var otab = ["fm1", "fm2", "fm3", "fm4"];
 			for (var i = 0; i < 4; ++i) {
 				var o = eval(otab[i]);
 				if (o.s)
@@ -804,12 +806,14 @@
 				p = skip(p + 4);
 				return LoadPlugin(str.substr(p));
 			}
+			
+			// list
 			if (test(p, "list") || test(p, "help")) {
 				var r = "";
 				p = skip(p + 4);
 				if (test(p, "plugins")) {
 					for (var i = 0; i < plugins.length; ++i) {
-						r += plugins[i].name + ":" + plugins[i].script + "\n";
+						r += "name: " + plugins[i].name + "   script name: " + plugins[i].script + "\n";
 					}
 					return r;
 				}
@@ -843,15 +847,15 @@
 					return r;
 				}
 				if (test(p, "fmo")) {
-					r = "bdo.s:" + bdo.s;
-					r += "\nsdo.s:" + sdo.s;
-					r += "\nhho.s:" + hho.s;
-					r += "\ncyo.s:" + cyo.s + "\n";
+					r = "fm1.s:" + fm1.s;
+					r += "\nfm2.s:" + fm2.s;
+					r += "\nfm3.s:" + fm3.s;
+					r += "\nfm4.s:" + fm4.s + "\n";
 					return r;
 				}
 				
 				if (test(p, "noise")) {
-					r = "noise.s (note):" + noise.s + "\n";
+					r = "noise.s (sequence):" + noise.s + "\n";
 					r += "noise.v (volume):" + noise.v + "\n";
 					return r;
 				}
@@ -886,19 +890,19 @@
 					return oscdesc(o7, "o7");
 				if (test(p, "o8"))
 					return oscdesc(o8, "o8");
-				if (test(p, "bdo"))
-					return fmodesc(bdo, "bdo");
-				if (test(p, "sdo"))
-					return fmodesc(sdo, "sdo");
-				if (test(p, "hho"))
-					return fmodesc(hho, "hho");
-				if (test(p, "cyo"))
-					return fmodesc(cyo, "cyo");
+				if (test(p, "fm1"))
+					return fmodesc(fm1, "fm1");
+				if (test(p, "fm2"))
+					return fmodesc(fm2, "fm2");
+				if (test(p, "fm3"))
+					return fmodesc(fm3, "fm3");
+				if (test(p, "fm4"))
+					return fmodesc(fm4, "fm4");
 
 				r += "\n";
 				r += "Objects\n";
 				r += "  o1 o2 o3 o4 o5 o6 o7 o8  - oscillators\n";
-				r += "  bdo sdo hho cyo          - drums\n";
+				r += "  fm1 fm2 fm3 fm4          - fm oscillators (Osc3>Osc2>Osc1)\n";
 				r += "  noise                    - noise\n";
 				r += "  say                      - speech synthesis\n";
 				r += "  master                   - master output control\n"
@@ -912,7 +916,7 @@
 				r += "Commands\n";
 				r += "  object.property=formula  - assign formula to object's property.\n";
 				r += "  list [object name]       - list object's properties.\n";
-				r += "  reset                    - reset program\n";
+				r += "  reset                    - reset\n";
 				r += "\n";
 				return r;
 			}
@@ -1166,10 +1170,10 @@
 				beat32 = (c32 == 0 ? 1 : 0);
 				beat64 = (c64 == 0 ? 1 : 0);
 				master.next(nextTime);
-				bdo.next(nextTime);
-				sdo.next(nextTime);
-				hho.next(nextTime);
-				cyo.next(nextTime);
+				fm1.next(nextTime);
+				fm2.next(nextTime);
+				fm3.next(nextTime);
+				fm4.next(nextTime);
 				o1.next(nextTime);
 				o2.next(nextTime);
 				o3.next(nextTime);
@@ -1463,7 +1467,7 @@
 			}
 		}
 
-		function OSC(f, v, t, to) {
+		function Oscillator(f, v, t, to) {
 			this.MakeWav = function () {
 				for (var i = 0; i < 32; ++i) {
 					var c = this.wav[i];
@@ -1487,21 +1491,7 @@
 					this.curve[15 + i] = k;
 					this.curve[15 - i] = -k;
 				}
-				/*		var dist=Math.min(.99,numeval(this.dist));
-						var peak=1-dist*.5;
-						var v=(.01+dist)*100;
-						for(var i=0;i<16;++i){
-							var c=i/15;
-							var k=Math.min(1,c*v);
-							this.curve[15+i]=(k+(1-k)*c)*peak;
-							this.curve[15-i]=(-k-(1-k)*c)*peak;
-						}
-				*/
-				//		if(this.rdist!=this.dist){
-				//			this.rdist=this.dist;
-				//			console.log(this.curve);
-				//		}
-			};
+							};
 			this.ena = 0;
 			this.wav = this.defwav = "10000001";
 			this.custom = [];
@@ -1588,7 +1578,6 @@
 					this.OscDetune.setTargetAtTime(tune, t, Math.pow(100, numeval(this.porta)) * .001);
 					this.FilDetune.setValueAtTime(tune, t);
 					var _freq = numeval(this.f);
-					//			this.OscFrequency.setValueAtTime(_freq,t);
 					this.OscFrequency.setTargetAtTime(_freq, t, Math.pow(100, numeval(this.porta)) * .001);
 					var _cutoff = numeval(this.c);
 					this.FilFrequency.setValueAtTime(_freq * _cutoff, t);
@@ -1605,82 +1594,97 @@
 				this.Pan.pan.value = (numeval(this.pan) - 0.5) * 2;
 			}
 		}
-		function FMO(f1, p1, v1, r1, t1, f2, p2, v2, r2, t2, f3, p3, v3, r3, t3, pan) {
-			this.Op1 = audioctx.createOscillator();
-			this.Op1gain = audioctx.createGain();
-			this.Op2 = audioctx.createOscillator();
-			this.Op2gain = audioctx.createGain();
-			this.Op3 = audioctx.createOscillator();
-			this.Op3gain = audioctx.createGain();
-			this.Pan = audioctx.createStereoPanner();
-			this.form = { 0: "sine", 1: "sawtooth", 2: "square" };
+		
+	function Fm_Oscillator(f1,p1,v1,r1,t1,f2,p2,v2,r2,t2,f3,p3,v3,r3,t3,pan) {
+	this.Op1=audioctx.createOscillator();
+	this.Op1gain=audioctx.createGain();
+	this.Op2=audioctx.createOscillator();
+	this.Op2gain=audioctx.createGain();
+	this.Op3=audioctx.createOscillator();
+	this.Op3gain=audioctx.createGain();
+	this.Pan=audioctx.createStereoPanner();
+	this.form={0:"sine",1:"sawtooth",2:"square"};
 
-			this.Op3.connect(this.Op3gain);
-			this.Op3gain.connect(this.Op2.frequency);
-			this.Op2.connect(this.Op2gain);
-			this.Op2gain.connect(this.Op1.frequency);
-			this.Op1.connect(this.Op1gain);
-			this.Op1gain.connect(this.Pan);
-			this.Pan.connect(master.out);
-			this.Op1gain.gain.value = 0;
-			this.s = "";
-			this.step = 0;
-			this.f1 = this.deff1 = f1;
-			this.p1 = this.defp1 = p1;
-			this._v = this.v = this.defv = v1;
-			this.r1 = this.defr1 = r1;
-			this.f2 = f2;
-			this.p2 = p2;
-			this.v2 = v2;
-			this.r2 = r2;
-			this.f3 = f3;
-			this.p3 = p3;
-			this.v3 = v3;
-			this.r3 = r3;
-			this.pan = pan;
-			this.Op1.start(0);
-			this.Op2.start(0);
-			this.Op3.start(0);
-			this.Op1.frequency.value = f1;
-			this.Op2.frequency.value = f2;
-			this.Op3.frequency.value = f3;
-			this.Op1.type = this.form[t1];
-			this.Op2.type = this.form[t2];
-			this.Op3.type = this.form[t3];
-			this.Op1gaingain = new Automation(audioctx, this.Op1gain.gain);
-			this.Op2gaingain = new Automation(audioctx, this.Op2gain.gain);
-			this.Op3gaingain = new Automation(audioctx, this.Op3gain.gain);
-			this.Op1frequency = new Automation(audioctx, this.Op1.frequency);
-			this.Op2frequency = new Automation(audioctx, this.Op2.frequency);
-			this.Op3frequency = new Automation(audioctx, this.Op3.frequency);
-			this.trig = function (t) {
-				this.Op1gaingain.setValueAtTime(0, t);
-				this.Op1gaingain.linearRampToValueAtTime(this._v, t + 0.001);
-				this.Op2gaingain.setValueAtTime(this.v2, t);
-				this.Op3gaingain.setValueAtTime(this.v3, t);
-				this.Op1frequency.setValueAtTime(this.f1, t);
-				this.Op2frequency.setValueAtTime(this.f2, t);
-				this.Op1gaingain.setTargetAtTime(0, t + 0.01, this.r1);
-				this.Op2gaingain.setTargetAtTime(0, t + 0.01, this.r2);
-				this.Op3gaingain.setTargetAtTime(0, t + 0.01, this.r3);
-				this.Op1frequency.setTargetAtTime(this.f1 * this.p1, t + 0.011, this.r1);
-				this.Op2frequency.setTargetAtTime(this.f2 * this.p2, t + 0.011, this.r2);
-				this.Op3frequency.setTargetAtTime(this.f3 * this.p3, t + 0.011, this.r3);
-			}
-			this.next = function (t) {
-				var s = Mml(streval(this.s));
-				this.step = tick % s.length;
-				var c = s[this.step];
-				this._v = numeval(this.v);
-				if (c) {
-					var n = (c - 48) * 100;
-					this.Op1.detune.value = n;
-					this.trig(t);
-				}
-				this.Pan.pan.value = (this.pan - 0.5) * 2;
-			}
+	this.Op3.connect(this.Op3gain);
+	this.Op3gain.connect(this.Op2.frequency);
+	this.Op2.connect(this.Op2gain);
+	this.Op2gain.connect(this.Op1.frequency);
+	this.Op1.connect(this.Op1gain);
+	this.Op1gain.connect(this.Pan);
+	this.Pan.connect(master.out);
+	this.Op1gain.gain.value=0;
+	this.s="";
+	this.step=0;
+	this.f1=this.deff1=f1;
+	this.p1=this.defp1=p1;
+	this._v=this.v=this.defv=v1;
+	this.r1=this.defr1=r1;
+	this.f2=f2;
+	this.p2=p2;
+	this.v2=v2;
+	this.r2=r2;
+	this.f3=f3;
+	this.p3=p3;
+	this.v3=v3;
+	this.r3=r3;
+	this.pan=pan;
+	this.Op1.start(0);
+	this.Op2.start(0);
+	this.Op3.start(0);
+	this.Op1.frequency.value=f1;
+	this.Op2.frequency.value=f2;
+	this.Op3.frequency.value=f3;
+	this.Op1.type=this.form[t1];
+	this.Op2.type=this.form[t2];
+	this.Op3.type=this.form[t3];
+	this.Op1gaingain=new Automation(audioctx,this.Op1gain.gain);
+	this.Op2gaingain=new Automation(audioctx,this.Op2gain.gain);
+	this.Op3gaingain=new Automation(audioctx,this.Op3gain.gain);
+	this.Op1frequency=new Automation(audioctx,this.Op1.frequency);
+	this.Op2frequency=new Automation(audioctx,this.Op2.frequency);
+	this.Op3frequency=new Automation(audioctx,this.Op3.frequency);
+/*	this.trig=function(t) {
+		this.Op1gain.gain.cancelScheduledValues(t);
+//		this.Op1gain.gain.setValueAtTime(0,t);
+//		this.Op1gain.linearRampToValueAtTime(this.v[i],t+0.005);
+		this.Op1gain.setValueAtTime(this.v[i],t);
+		this.Op1gain.gain.linearRampToValueAtTime(0,t+0.006+this.h*0.075);
+	}*/
+	this.trig=function(t) {
+//		this.Op1gaingain.cancelScheduledValues(t);
+//		this.Op2gaingain.cancelScheduledValues(t);
+//		this.Op3gaingain.cancelScheduledValues(t);
+//		this.Op1frequency.cancelScheduledValues(t);
+//		this.Op2frequency.cancelScheduledValues(t);
+		this.Op1gaingain.setValueAtTime(0,t);
+		this.Op1gaingain.linearRampToValueAtTime(this._v,t+0.001);
+		this.Op2gaingain.setValueAtTime(this.v2,t);
+		this.Op3gaingain.setValueAtTime(this.v3,t);
+		this.Op1frequency.setValueAtTime(this.f1,t);
+		this.Op2frequency.setValueAtTime(this.f2,t);
+		this.Op1gaingain.setTargetAtTime(0,t+0.01,this.r1);
+		this.Op2gaingain.setTargetAtTime(0,t+0.01,this.r2);
+		this.Op3gaingain.setTargetAtTime(0,t+0.01,this.r3);
+		this.Op1frequency.setTargetAtTime(this.f1*this.p1,t+0.011,this.r1);
+		this.Op2frequency.setTargetAtTime(this.f2*this.p2,t+0.011,this.r2);
+		this.Op3frequency.setTargetAtTime(this.f3*this.p3,t+0.011,this.r3);
+//		this.Op1gaingain.linearRampToValueAtTime(0,t+0.06+this.r1);
+//		this.Op2gaingain.linearRampToValueAtTime(0,t+0.06+this.r2);
+//		this.Op3gaingain.linearRampToValueAtTime(0,t+0.06+this.r3);
+	}
+	this.next=function(t) {
+		var s=Mml(streval(this.s));
+		this.step=tick%s.length;
+		var c=s[this.step];
+		this._v=numeval(this.v);
+		if(c) {
+			var n=(c-48)*100;
+			this.Op1.detune.value=n;
+			this.trig(t);
 		}
-
+		this.Pan.pan.value=(this.pan-0.5)*2;
+	}
+}
 		function Master() {
 			this.loadcnt = 0;
 			function GetName(s) {
@@ -2009,7 +2013,7 @@
 						if (this.histcur >= 0) {
 							--this.histcur;
 							if (this.histcur == -1) {
-								this.log[0] = "> ";
+								this.log[0] = "- ";
 								this.cursor = 2;
 							}
 							else {
