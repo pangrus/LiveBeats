@@ -353,11 +353,10 @@
 			o7 = new Oscillator(440, 0.5, 1, out);
 			o8 = new Oscillator(440, 0.5, 1, out);
 
-			//Oscillator definitions
-		 	fm1 = new Fm_Oscillator(115, .1, .8, .2, 0, 230, .1, 2670, .02, 0, 300, .1, 1303, .1, 0, .5);
-		 	fm3 = new Fm_Oscillator(2233, 1, .3, .03, 0, 823, .1, 3120, .07, 0, 552, .1, 1800, .02, 0, .5);
-			fm2 = new Fm_Oscillator(300,  2, .5, .1, 0, 1723, 1, 4912, .6, 0, 2140, 1, 3800, .1, 0, .5);
-			fm4 = new Fm_Oscillator(2612, 1, .3, .1, 0, 1826, 1, 4219, 3, 2, 3897, 1, 1401, 1, 2, .5);
+		 	fm1 = new Fm_Oscillator(115,.5,.8,.2,0,  451,.5,2670,.02,0,  131,1,1303,.1,0, .5);
+		 	fm3 = new Fm_Oscillator(213,1,.8,.1,0, 723,1,2912,.6,0, 140,1,800,.1,0,.3);;
+			fm2 = new Fm_Oscillator(2233,1,.5,.03,0, 423,1,3120,.07,2, 552,1,1800,.02,1,.7);
+			fm4 = new Fm_Oscillator(2612,1,.4,.4,0, 1826,1,4219,5,2, 3897,1,1401,1,2,.4);
 			
 			noise = new Noise(440, 0.8, out);
 			speech = new Speech();
@@ -687,6 +686,7 @@
 			else
 				return right;
 		}
+		
 		function GetUrl() {
 			document.getElementById("urlpane").style.display = "block";
 			var s = location.href.split("?")[0] + "?";
@@ -721,12 +721,13 @@
 				if (o.porta != o.defporta)
 					s += "o" + i + ".porta=" + encodeURIComponent(o.porta) + "&";
 			}
-			var otab = ["fm1", "fm2", "fm3", "fm4"];
-			for (var i = 0; i < 4; ++i) {
+			var otab = ["fm1", "fm2", "fm3", "fm4", "noise"];
+			for (var i = 0; i < 5; ++i) {
 				var o = eval(otab[i]);
 				if (o.s)
 					s += otab[i] + ".s=" + encodeURIComponent(o.s) + "&";
 			}
+
 			for (var i = 0, e = plugins.length; i < e; ++i) {
 				var plug = plugins[i].obj;
 				var plugparam = pluginsparam[i];
@@ -737,6 +738,8 @@
 			}
 			document.getElementById("url").value = (s);
 		}
+		
+		//Parse
 		function Parse(str) {
 			function isspc(p) {
 				if (str[p] == " " || p >= str.length)
@@ -763,7 +766,6 @@
 					s = eval(s) + "\n";
 				} catch (e) { s = "Undefined\n"; }
 				return str.substr(i) + "=" + s + "\n";
-
 			}
 			if (test(p, "cmdline")) {
 				var el = document.getElementById("cmdline");
@@ -798,7 +800,7 @@
 				p = skip(p + 4);
 				return NamePlugin(str.substr(p));
 			}
-			if (test(p, "del")) {
+			if (test(p, "delete")) {
 				p = skip(p + 3);
 				return DeletePlugin(str.substr(p));
 			}
@@ -916,7 +918,7 @@
 				r += "Commands\n";
 				r += "  object.property=formula  - assign formula to object's property.\n";
 				r += "  list [object name]       - list object's properties.\n";
-				r += "  reset                    - reset\n";
+				r += "  reset                    - reload url\n";
 				r += "\n";
 				return r;
 			}
@@ -1047,7 +1049,7 @@
 			t -= mm * 60;
 			var ss = t | 0;
 			var ff = ((t - ss) * 30) | 0;
-			return ("00" + hh).substr(-2) + ":" + ("00" + mm).substr(-2) + ":" + ("00" + ss).substr(-2);
+			return ("00" + hh).substr(-2) + "h " + ("00" + mm).substr(-2) + "m " + ("00" + ss).substr(-2) + "s ";
 		}
 		
 		function Automation_None(actx, param, v, t) {
@@ -1603,8 +1605,6 @@
 	this.Op3=audioctx.createOscillator();
 	this.Op3gain=audioctx.createGain();
 	this.Pan=audioctx.createStereoPanner();
-	this.form={0:"sine",1:"sawtooth",2:"square"};
-
 	this.Op3.connect(this.Op3gain);
 	this.Op3gain.connect(this.Op2.frequency);
 	this.Op2.connect(this.Op2gain);
@@ -1634,9 +1634,12 @@
 	this.Op1.frequency.value=f1;
 	this.Op2.frequency.value=f2;
 	this.Op3.frequency.value=f3;
-	this.Op1.type=this.form[t1];
-	this.Op2.type=this.form[t2];
-	this.Op3.type=this.form[t3];
+	
+	this.Op1.type = "sine";
+	this.Op1.type = "sine";
+	this.Op1.type = "sine";
+
+
 	this.Op1gaingain=new Automation(audioctx,this.Op1gain.gain);
 	this.Op2gaingain=new Automation(audioctx,this.Op2gain.gain);
 	this.Op3gaingain=new Automation(audioctx,this.Op3gain.gain);
@@ -2096,7 +2099,6 @@
 			video.video.play();
 		}
 	</script>
-
 	
     <div id="base" style="position:absolute;left:0px;top:0px;background:#000;overflow:hidden">
 	</div>
@@ -2109,7 +2111,7 @@
 		style="display:none;width:100%;position:absolute;left:0;bottom:0;border:none" />
 
 		<div id="timecode"
-		style="position:absolute;border:none;margin:0px;padding:0px;right:2px;bottom:5px;width:120px;height:20px;color:#aaa;font-size:20px;font-family:courier">
+		style="position:absolute;border:none;margin:0px;padding:0px;right:2px;bottom:5px;width:115px;height:15px;color:#aaa;font-size:15px;font-family:courier">
 	</div>
 	<div id="urlpane">
 		<div style="width:90%;margin:auto">
