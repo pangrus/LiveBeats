@@ -39,7 +39,7 @@ plugin_txt=function(param) {
 	this.ctx.lineJoin="round";
 	this.rows=28;
 	this.mry=(this.yheight/this.rows)|0;
-	this.ctx.font="bold "+(this.mry-2)+"px Courier,monospace";
+	this.ctx.font=(this.mry-2)+"px Courier,monospace";
 	this.mrx=this.ctx.measureText("M").width;
 	this.starttime=this.lasttime=0;
 	this.curcnt=0;

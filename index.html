@@ -41,7 +41,7 @@
 	<script type="text/javascript" src="./plugin_txt.js"></script>
 	<script type="text/javascript" src="./plugin_wave.js"></script>
 	<script type="text/javascript" src="./plugin_cam.js"></script>
-	<script type="text/javascript" src="./plugin_drop.js"></script>
+	<script type="text/javascript" src="./plugin_wgl.js"></script>
 	<script type="text/javascript">
         var internalResoX = window.innerWidth;
 		var internalResoY = window.innerHeight;
@@ -126,12 +126,12 @@
 		var fn = [
 			"cam.a=1;cam.h=.3;cam.w=.2;cam.x=.88;cam.y=.2", 
 			"wav.type=2;wav.hue=lfo32;wav.a=1;wav.z=.5+lfo32",
-			"drop.a=0.5;drop.type=3;drop.hue=.7",
+			"wgl.a=0.5;wgl.type=3;wgl.hue=.7",
 			"fm1.s=s5;fm1.v=1;noise.s=crrr rrrr rrrr rrcr;noise.v=1",
 			"o1.s=c;o2.s=c;o3.s=c;o1.f=110.05;o2.f=109.97;o3.f=110.3",
 			"o5.s=s20;o5.delay=1;o5.c=lfo128*3+3",
 			"master.g=0102030405060708",
-			"cam.a=0;wav.a=0;drop.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;fm1.s=;master.g=0",
+			"cam.a=0;wav.a=0;wgl.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;fm1.s=;master.g=0",
 		];
 
 		function Trigger(instrument, accent, when) {
@@ -353,10 +353,10 @@
 			o7 = new Oscillator(440, 0.5, 1, out);
 			o8 = new Oscillator(440, 0.5, 1, out);
 
-		 	fm1 = new Fm_Oscillator(115,.5,.8,.2,0,  451,.5,2670,.02,0,  131,1,1303,.1,0, .5);
-		 	fm3 = new Fm_Oscillator(213,1,.8,.1,0, 723,1,2912,.6,0, 140,1,800,.1,0,.3);;
-			fm2 = new Fm_Oscillator(2233,1,.5,.03,0, 423,1,3120,.07,2, 552,1,1800,.02,1,.7);
-			fm4 = new Fm_Oscillator(2612,1,.4,.4,0, 1826,1,4219,5,2, 3897,1,1401,1,2,.4);
+		 	fm1 = new Fm_Oscillator(115,.5,.3,.8,451,.5,.02,2670,131,1,.1,1303,.5);
+		 	fm3 = new Fm_Oscillator(213,1,.1,.8,723,1,.6,2912,140,1,.1,800,.5);
+			fm2 = new Fm_Oscillator(2233,1,.03,.5,423,1,.07,3120,552,1,.02,1800,.5);
+			fm4 = new Fm_Oscillator(100,2,.1,.4,3000,1,5,4000,.8,1,1,1400,.5);
 			
 			noise = new Noise(440, 0.8, out);
 			speech = new Speech();
@@ -383,10 +383,10 @@
 			
 			//Caricamento plugin
 			console.log("Caricamento plugin");
-			_LoadPlugin("plugin_drop","drop","base");
-	        _LoadPlugin("plugin_cam",  "cam",  "base");
-			_LoadPlugin("plugin_wave", "wav",  "base");
-			_LoadPlugin("plugin_txt",  "txt",  "topmost");
+			_LoadPlugin("plugin_cam","cam","base");
+			_LoadPlugin("plugin_wave", "wav", "base");
+			_LoadPlugin("plugin_txt","txt","topmost");
+			_LoadPlugin("plugin_wgl","wgl","base");
 			setTimeout(WaitReady, 200);
 		}
 		
@@ -535,18 +535,18 @@
 		function fmodesc(o, nam) {
 			var r;
 			r  = nam + ".s  (sequence):" + o.s + "\n";
-			r += nam + ".f3 (frequency):" + o.f3 +"\n";
-			r += nam + ".p3 (pitch mod):" + o.p3 +"\n";
-			r += nam + ".r3 (rate mod):" + o.r3 +"\n";
-			r += nam + ".v3 (volume):" + o.v3 +"\n";
-			r += nam + ".f2 (frequency):" + o.f2 +"\n";
-			r += nam + ".p2 (pitch mod):" + o.p2 +"\n";
-			r += nam + ".r2 (rate mod):" + o.r2 +"\n";
-			r += nam + ".v2 (volume):" + o.v2 +"\n";
 			r += nam + ".f1 (frequency):" + o.f1 +"\n";
 			r += nam + ".p1 (pitch mod):" + o.p1 +"\n";
 			r += nam + ".r1 (rate mod):" + o.r1 +"\n";
 			r += nam + ".v  (volume):" + o.v +"\n";
+			r += nam + ".f2 (frequency):" + o.f2 +"\n";
+			r += nam + ".p2 (pitch mod):" + o.p2 +"\n";
+			r += nam + ".r2 (rate mod):" + o.r2 +"\n";
+			r += nam + ".v2 (volume):" + o.v2 +"\n";
+			r += nam + ".f3 (frequency):" + o.f3 +"\n";
+			r += nam + ".p3 (pitch mod):" + o.p3 +"\n";
+			r += nam + ".r3 (rate mod):" + o.r3 +"\n";
+			r += nam + ".v3 (volume):" + o.v3 +"\n";
 			r += nam + ".pan (panpot) :" + o.pan +"\n";
 	        return r;
 		}
@@ -738,8 +738,6 @@
 			}
 			document.getElementById("url").value = (s);
 		}
-		
-		//Parse
 		function Parse(str) {
 			function isspc(p) {
 				if (str[p] == " " || p >= str.length)
@@ -783,7 +781,7 @@
 			if (test(p, "reload") || test(p, "reset")) {
 				location.href = location.href;
 			}
-			if (test(p, "clear")) {
+			if (test(p, "clear") || test(p, "cls")) {
 				cmds.log.length = 0;
 				return "";
 			}
@@ -801,7 +799,7 @@
 				return NamePlugin(str.substr(p));
 			}
 			if (test(p, "delete")) {
-				p = skip(p + 3);
+				p = skip(p + 6);
 				return DeletePlugin(str.substr(p));
 			}
 			if (test(p, "load")) {
@@ -809,13 +807,12 @@
 				return LoadPlugin(str.substr(p));
 			}
 			
-			// list
 			if (test(p, "list") || test(p, "help")) {
 				var r = "";
 				p = skip(p + 4);
 				if (test(p, "plugins")) {
 					for (var i = 0; i < plugins.length; ++i) {
-						r += "name: " + plugins[i].name + "   script name: " + plugins[i].script + "\n";
+						r += "name: " + plugins[i].name + "  script name: " + plugins[i].script + "\n";
 					}
 					return r;
 				}
@@ -835,7 +832,6 @@
 					}
 					return r;
 				}
-				
 				if (test(p, "osc")) {
 					r = "o1.s:" + o1.s;
 					r += "\no2.s:" + o2.s;
@@ -855,13 +851,11 @@
 					r += "\nfm4.s:" + fm4.s + "\n";
 					return r;
 				}
-				
 				if (test(p, "noise")) {
 					r = "noise.s (sequence):" + noise.s + "\n";
 					r += "noise.v (volume):" + noise.v + "\n";
 					return r;
 				}
-
 				if (test(p, "master")) {
 					r = "master.v (volume):" + master.v + "\n";
 					r += "master.g (gate):" + master.g + "\n";
@@ -870,7 +864,6 @@
 					r += "master.ir:" + master.ir + "\n";
 					return r;
 				}
-			
 				if (test(p, "delay")) {
 					r = "delay.t (time):" + delay.t + "\n";
 					r += "delay.fb (feedback):" + delay.fb + "\n";
@@ -900,25 +893,24 @@
 					return fmodesc(fm3, "fm3");
 				if (test(p, "fm4"))
 					return fmodesc(fm4, "fm4");
-
 				r += "\n";
-				r += "Objects\n";
+				r += "objects\n";
 				r += "  o1 o2 o3 o4 o5 o6 o7 o8  - oscillators\n";
 				r += "  fm1 fm2 fm3 fm4          - fm oscillators (Osc3>Osc2>Osc1)\n";
 				r += "  noise                    - noise\n";
 				r += "  say                      - speech synthesis\n";
 				r += "  master                   - master output control\n"
 				r += "\n";
-				r += "Variables\n";
+				r += "variables\n";
 				r += "  tick                     - count up per tick (sixteenth note)\n";
 				r += "  sh8/sh16/sh32/sh64       - sample&hold\n";
 				r += "  lfo8/lfo16/lfo32/lfo64   - lfo\n";
 				r += "  s0-s24                   - pre-defined sequences\n";
 				r += "\n";
-				r += "Commands\n";
+				r += "commands\n";
 				r += "  object.property=formula  - assign formula to object's property.\n";
 				r += "  list [object name]       - list object's properties.\n";
-				r += "  reset                    - reload url\n";
+				r += "  reset                    - reload page";
 				r += "\n";
 				return r;
 			}
@@ -1597,7 +1589,7 @@
 			}
 		}
 		
-	function Fm_Oscillator(f1,p1,v1,r1,t1,f2,p2,v2,r2,t2,f3,p3,v3,r3,t3,pan) {
+	function Fm_Oscillator(f1,p1,r1,v1,f2,p2,r2,v2,f3,p3,r3,v3,pan) {
 	this.Op1=audioctx.createOscillator();
 	this.Op1gain=audioctx.createGain();
 	this.Op2=audioctx.createOscillator();
@@ -1635,30 +1627,17 @@
 	this.Op2.frequency.value=f2;
 	this.Op3.frequency.value=f3;
 	
-	this.Op1.type = "sine";
-	this.Op1.type = "sine";
-	this.Op1.type = "sine";
-
-
+	this.Op1.type="sine";
+	this.Op1.type="sine";
+	this.Op1.type="sine";
+	
 	this.Op1gaingain=new Automation(audioctx,this.Op1gain.gain);
 	this.Op2gaingain=new Automation(audioctx,this.Op2gain.gain);
 	this.Op3gaingain=new Automation(audioctx,this.Op3gain.gain);
 	this.Op1frequency=new Automation(audioctx,this.Op1.frequency);
 	this.Op2frequency=new Automation(audioctx,this.Op2.frequency);
 	this.Op3frequency=new Automation(audioctx,this.Op3.frequency);
-/*	this.trig=function(t) {
-		this.Op1gain.gain.cancelScheduledValues(t);
-//		this.Op1gain.gain.setValueAtTime(0,t);
-//		this.Op1gain.linearRampToValueAtTime(this.v[i],t+0.005);
-		this.Op1gain.setValueAtTime(this.v[i],t);
-		this.Op1gain.gain.linearRampToValueAtTime(0,t+0.006+this.h*0.075);
-	}*/
 	this.trig=function(t) {
-//		this.Op1gaingain.cancelScheduledValues(t);
-//		this.Op2gaingain.cancelScheduledValues(t);
-//		this.Op3gaingain.cancelScheduledValues(t);
-//		this.Op1frequency.cancelScheduledValues(t);
-//		this.Op2frequency.cancelScheduledValues(t);
 		this.Op1gaingain.setValueAtTime(0,t);
 		this.Op1gaingain.linearRampToValueAtTime(this._v,t+0.001);
 		this.Op2gaingain.setValueAtTime(this.v2,t);
@@ -1671,9 +1650,6 @@
 		this.Op1frequency.setTargetAtTime(this.f1*this.p1,t+0.011,this.r1);
 		this.Op2frequency.setTargetAtTime(this.f2*this.p2,t+0.011,this.r2);
 		this.Op3frequency.setTargetAtTime(this.f3*this.p3,t+0.011,this.r3);
-//		this.Op1gaingain.linearRampToValueAtTime(0,t+0.06+this.r1);
-//		this.Op2gaingain.linearRampToValueAtTime(0,t+0.06+this.r2);
-//		this.Op3gaingain.linearRampToValueAtTime(0,t+0.06+this.r3);
 	}
 	this.next=function(t) {
 		var s=Mml(streval(this.s));
@@ -1688,12 +1664,12 @@
 		this.Pan.pan.value=(this.pan-0.5)*2;
 	}
 }
-		function Master() {
-			this.loadcnt = 0;
-			function GetName(s) {
-				var p = s.lastIndexOf("/");
-				return s.substr(p + 1);
-			}
+	function Master() {
+		this.loadcnt = 0;
+		function GetName(s) {
+			var p = s.lastIndexOf("/");
+			return s.substr(p + 1);
+		}
 			this.LoadSample = function (buf, n, url) {
 				++this.loadcnt;
 				var req = new XMLHttpRequest();
