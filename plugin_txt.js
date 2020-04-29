@@ -1,5 +1,4 @@
 // plugin_txt
-
 plugin_txt = function(param) {
 	this.w=param.w;
 	this.h=param.h;

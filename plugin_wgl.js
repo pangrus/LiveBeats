@@ -1,5 +1,4 @@
 //plugin_wgl
-
 plugin_wgl = function(param){
 	var vj_vs="\
 		attribute vec3 position;\

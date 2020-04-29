@@ -1,5 +1,4 @@
 //plugin_wave 
-
 plugin_wave = function(param){
 	var vj_video_vs="\
 		attribute vec3 position;\

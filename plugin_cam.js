@@ -1,5 +1,4 @@
 // plugin_cam
-
 function RGBCol(x){
   x=1.5-x*2;
   if(x<0) x=0;
