@@ -129,7 +129,7 @@
 			"wgl.a=0.5;wgl.type=3;wgl.hue=.7",
 			"fm1.s=s5;fm1.v=1;noise.s=crrr rrrr rrrr rrcr;noise.v=1",
 			"o1.s=c;o2.s=c;o3.s=c;o1.f=110.05;o2.f=109.97;o3.f=110.3",
-			"o5.s=s20;o5.delay=1;o5.c=lfo128*3+3",
+			"o5.s=+cd-e2ga+cd4eg+el8adl16cg+ed;o5.delay=1;o5.c=lfo128*6+1",
 			"master.g=0102030405060708",
 			"cam.a=0;wav.a=0;wgl.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;fm1.s=;master.g=0",
 		];
@@ -749,14 +749,14 @@
 					++p;
 				return p;
 			}
-			function test(p, s) {
+			function text(p, s) {
 				if (str.indexOf(s, p) == p && isspc(p + s.length))
 					return true;
 				return false;
 			}
 			var p = 0;
 			p = skip(p);
-			if (test(p, "edit")) {
+			if (text(p, "edit")) {
 				var s;
 				var i = skip(p + 4);
 				s = replaceplugin(str.substr(i));
@@ -765,7 +765,7 @@
 				} catch (e) { s = "Undefined\n"; }
 				return str.substr(i) + "=" + s + "\n";
 			}
-			if (test(p, "cmdline")) {
+			if (text(p, "cmdline")) {
 				var el = document.getElementById("cmdline");
 				if ((cmdlinemode ^= 1)) {
 					el.style.display = "block";
@@ -774,18 +774,18 @@
 				else
 					el.style.display = "none";
 			}
-			if (test(p, "geturl")) {
+			if (text(p, "geturl")) {
 				GetUrl();
 				return "";
 			}
-			if (test(p, "reload") || test(p, "reset")) {
+			if (text(p, "reload") || text(p, "reset")) {
 				location.href = location.href;
 			}
-			if (test(p, "clear") || test(p, "cls")) {
+			if (text(p, "clear") || text(p, "cls")) {
 				cmds.log.length = 0;
 				return "";
 			}
-			if (test(p, "print")) {
+			if (text(p, "print")) {
 				var s;
 				p = skip(p + 5);
 				s = replaceplugin(str.substr(p));
@@ -794,30 +794,30 @@
 				} catch (e) { s = "Undefined\n"; }
 				return s;
 			}
-			if (test(p, "name")) {
+			if (text(p, "name")) {
 				p = skip(p + 4);
 				return NamePlugin(str.substr(p));
 			}
-			if (test(p, "delete")) {
+			if (text(p, "delete")) {
 				p = skip(p + 6);
 				return DeletePlugin(str.substr(p));
 			}
-			if (test(p, "load")) {
+			if (text(p, "load")) {
 				p = skip(p + 4);
 				return LoadPlugin(str.substr(p));
 			}
 			
-			if (test(p, "list") || test(p, "help")) {
+			if (text(p, "list") || text(p, "help")) {
 				var r = "";
 				p = skip(p + 4);
-				if (test(p, "plugins")) {
+				if (text(p, "plugins")) {
 					for (var i = 0; i < plugins.length; ++i) {
 						r += "name: " + plugins[i].name + "  script name: " + plugins[i].script + "\n";
 					}
 					return r;
 				}
 				for (var i = 0; i < plugins.length; ++i) {
-					if (test(p, plugins[i].name)) {
+					if (text(p, plugins[i].name)) {
 						r += plugins[i].name + ":\n";
 						for (var j in plugins[i].obj.param) {
 							r += " " + j + ":" + plugins[i].obj.param[j].value + "\n";
@@ -826,13 +826,25 @@
 					}
 				}
 				
-				if (test(p, "midi")) {
+				if (text(p, "midi")) {
 					for (var i = 0; i < midioutputs.length; ++i) {
 						r += (i + 1) + ":" + midioutputs[i].name + "\n";
 					}
 					return r;
 				}
-				if (test(p, "osc")) {
+				
+				if (text(p, "mml")) {
+					r  = "cdefgab - notes\n";
+					r += "#       - sharp\n";
+					r += "+ or <  - upper octave\n";
+					r += "o[n]    - octave selection\n";
+					r += "- or >  - lower octave\n";
+					r += "p or r  - pause\n";
+					r += "l[n]    - specifies note length\n";
+					return r;
+				}
+								
+				if (text(p, "osc")) {
 					r = "o1.s:" + o1.s;
 					r += "\no2.s:" + o2.s;
 					r += "\no3.s:" + o3.s;
@@ -844,19 +856,19 @@
 					r += "\n";
 					return r;
 				}
-				if (test(p, "fmo")) {
+				if (text(p, "fmo")) {
 					r = "fm1.s:" + fm1.s;
 					r += "\nfm2.s:" + fm2.s;
 					r += "\nfm3.s:" + fm3.s;
 					r += "\nfm4.s:" + fm4.s + "\n";
 					return r;
 				}
-				if (test(p, "noise")) {
+				if (text(p, "noise")) {
 					r = "noise.s (sequence):" + noise.s + "\n";
 					r += "noise.v (volume):" + noise.v + "\n";
 					return r;
 				}
-				if (test(p, "master")) {
+				if (text(p, "master")) {
 					r = "master.v (volume):" + master.v + "\n";
 					r += "master.g (gate):" + master.g + "\n";
 					r += "master.tempo:" + master.tempo + "\n";
@@ -864,54 +876,59 @@
 					r += "master.ir:" + master.ir + "\n";
 					return r;
 				}
-				if (test(p, "delay")) {
+				if (text(p, "delay")) {
 					r = "delay.t (time):" + delay.t + "\n";
 					r += "delay.fb (feedback):" + delay.fb + "\n";
 					return r;
 				}
-				if (test(p, "o1"))
+				if (text(p, "o1"))
 					return oscdesc(o1, "o1");
-				if (test(p, "o2"))
+				if (text(p, "o2"))
 					return oscdesc(o2, "o2");
-				if (test(p, "o3"))
+				if (text(p, "o3"))
 					return oscdesc(o3, "o3");
-				if (test(p, "o4"))
+				if (text(p, "o4"))
 					return oscdesc(o4, "o4");
-				if (test(p, "o5"))
+				if (text(p, "o5"))
 					return oscdesc(o5, "o5");
-				if (test(p, "o6"))
+				if (text(p, "o6"))
 					return oscdesc(o6, "o6");
-				if (test(p, "o7"))
+				if (text(p, "o7"))
 					return oscdesc(o7, "o7");
-				if (test(p, "o8"))
+				if (text(p, "o8"))
 					return oscdesc(o8, "o8");
-				if (test(p, "fm1"))
+				if (text(p, "fm1"))
 					return fmodesc(fm1, "fm1");
-				if (test(p, "fm2"))
+				if (text(p, "fm2"))
 					return fmodesc(fm2, "fm2");
-				if (test(p, "fm3"))
+				if (text(p, "fm3"))
 					return fmodesc(fm3, "fm3");
-				if (test(p, "fm4"))
+				if (text(p, "fm4"))
 					return fmodesc(fm4, "fm4");
-				r += "\n";
+				r = "\n";
 				r += "objects\n";
 				r += "  o1 o2 o3 o4 o5 o6 o7 o8  - oscillators\n";
 				r += "  fm1 fm2 fm3 fm4          - fm oscillators (Osc3>Osc2>Osc1)\n";
 				r += "  noise                    - noise\n";
 				r += "  say                      - speech synthesis\n";
 				r += "  master                   - master output control\n"
-				r += "\n";
 				r += "variables\n";
 				r += "  tick                     - count up per tick (sixteenth note)\n";
 				r += "  sh8/sh16/sh32/sh64       - sample&hold\n";
 				r += "  lfo8/lfo16/lfo32/lfo64   - lfo\n";
 				r += "  s0-s24                   - pre-defined sequences\n";
-				r += "\n";
 				r += "commands\n";
 				r += "  object.property=formula  - assign formula to object's property.\n";
 				r += "  list [object name]       - list object's properties.\n";
 				r += "  reset                    - reload page\n";
-				r += "\n";
+				r += "mml\n";
+				r += "  cdefgab                  - notes\n";
+				r += "  #                        - sharp\n";
+				r += "  + or <                   - upper octave\n"; 
+				r += "  o[n]                     - octave selection\n";
+				r += "  - or >                   - lower octave\n";
+				r += "  p or r                   - pause\n";
+				r += "  l[n]                     - specifies note length\n";
 				return r;
 			}
 			return null;
@@ -922,6 +939,8 @@
 				return v;
 			return Parse0(s);
 		}
+				
+		// Music macro language
 		function Mml(s) {
 			function GetN(def) {
 				var v = 0;
@@ -946,13 +965,10 @@
 			function Shift(n) {
 				for (; ;) {
 					switch (s[p]) {
-						case "+": case "#":
+						case "#":
 							++p;
 							++n;
 							break;
-						case "-":
-							++p;
-							--n;
 						default:
 							return n;
 					}
@@ -968,11 +984,11 @@
 			while (p < len) {
 				l = 0;
 				switch (s[p]) {
-					case ">":
+					case "-": case ">":
 						++p;
 						--o;
 						break;
-					case "<":
+					case "+": case "<":
 						++p;
 						++o;
 						break;
@@ -984,7 +1000,7 @@
 						++p;
 						defl = GetN(16);
 						break;
-					case "R": case "r":
+					case "p": case "P": case "R": case "r":
 						++p;
 						n = 0;
 						l = GetLen(defl);

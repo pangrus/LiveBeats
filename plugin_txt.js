@@ -1,31 +1,6 @@
-// vj_txt.js : command line text display
-//
-// Should define same name function as
-// function(param)
-//	param={
-//		'w':elementWidth,
-//		'h':elementHeight,
-//		'txt':texts
-//		'wavedat':timeDomainDataUint8Array,
-//		'freqdat':freqDomainDataUint8Array
-//	}
-//
-// Return object should define:
-//	this.elem : dom-element of this plugin
-//	this.anim : animation callback function
-//	this.param : control parameter list.
-//		number or string, number value range is recommended to 0.0-1.0 for typical use.
-//		following params are pre-defined at host.
-//		'a' : alpha
-//		'b' : blur
-//		'h' : height
-//		'w' : width
-//		'x' : x-pos
-//		'y' : y-pos
-//		'z' : zoom ratio
-//		'r' : rotate
-//
-plugin_txt=function(param) {
+// plugin_txt
+
+plugin_txt = function(param) {
 	this.w=param.w;
 	this.h=param.h;
 	this.yheight=(this.h*.8)|0;
