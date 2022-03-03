@@ -204,19 +204,20 @@ plugin_wave = function(param){
 	this.levx=new Uint8Array(this.sizex*4);
 	this.levy=new Uint8Array(this.sizey*4);
 	this.param = {
-		"a":{"value":0,				"type":"double",	"min":0,	"max":1},
-		"line":{"value":2,		"type":"double",	"min":1,	"max":20},
-		"type":{"value":2,		"type":"int",		"min":0,	"max":2},
-		"anim":{"value":1,		"type":"int",		"min":0,	"max":1},
-		"rot":{"value":0,			"type":"double","min":0,"max":1},
-		"z":{"value":.5,				"type":"double","min":0,"max":100},
-		"fill":{"value":0,		"type":"int",		"min":0,	"max":1},
-		"effb":{"value":0,		"type":"double",	"min":0,	"max":20},
-		"effr":{"value":0,	"type":"double",	"min":0.9,	"max":0.99},
-		"effx":{"value":0,		"type":"double",	"min":-20,	"max":20},
-		"effy":{"value":0,		"type":"double",	"min":-20,	"max":20},
-		"effz":{"value":1,		"type":"double",	"min":0.5,	"max":2},
-		"hue":{"value":0,			"type":"double"},
+		"a":{"value":1,"type":"double","min":0,"max":1},
+		"h":{"value":100,"type":"double"},
+		"line":{"value":2,"type":"double","min":1,"max":20},
+		"type":{"value":1,"type":"int","min":0,"max":2},
+		"anim":{"value":1,"type":"int","min":0,"max":1},
+		"rot":{"value":0,"type":"double","min":0,"max":1},
+		"z":{"value":0.5,"type":"double","min":0,"max":100},
+		"fill":{"value":0,"type":"int","min":0,"max":1},
+		"effb":{"value":0,"type":"double","min":0,"max":20},
+		"effr":{"value":0,"type":"double","min":0.9,"max":0.99},
+		"effx":{"value":0,"type":"double","min":-20,"max":20},
+		"effy":{"value":0,"type":"double","min":-20,"max":20},
+		"effz":{"value":1,"type":"double","min":0.5,"max":2},
+		"hue":{"value":0.7,"type":"double"},
 		"bcol":{"value":"#fff",	"type":"string"},
 	};
 	this.starttime=0;

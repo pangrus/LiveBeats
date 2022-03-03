@@ -11,7 +11,7 @@ plugin_txt = function(param) {
 	this.elem.height=this.h;
 	this.ctx=this.elem.getContext("2d");
 	this.ctx.lineJoin="round";
-	this.rows=28;
+	this.rows=32;
 	this.mry=(this.yheight/this.rows)|0;
 	this.ctx.font=(this.mry-2)+"px Courier,monospace";
 	this.mrx=this.ctx.measureText("M").width;
@@ -51,9 +51,9 @@ plugin_txt = function(param) {
 	};
 	this.param={
 		"a":{"value":1,"type":"double"},
-		"col":{"value":"#eff","type":"string"},
-		"h":{"value":1.2,"type":"double"},
+		"col":{"value":"#ee5","type":"string"},
+		"h":{"value":1,"type":"double"},
 		"w":{"value":1,"type":"double"},
-	    "x":{"value":0.5,"type":"double"},
+	    "x":{"value":0.8,"type":"double"},
 	};
 }

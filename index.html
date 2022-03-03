@@ -73,7 +73,6 @@
 		var cc = [0, 0, 0, 0, 0, 0, 0, 0];
 		var rand1 = rand2 = rand4 = 0;
 		var lev = 0;
-
 		var s0 = "pppppppppppppppp";
 		var s1 = "gpppgpppgpppgppp";
 		var s2 = "gpppggppgpgpggpg";
@@ -120,15 +119,15 @@
 		var midicb = [];
 
 		var fn = [
-			"wgl.a=0.7;wgl.type=4;wgl.hue=.7;wgl.h=.2", 
-			"wav.type=1;wav.hue=.7;wav.a=.7;wav.h=.4",
-			"cam.a=1;cam.h=.3;cam.w=.2;cam.x=.9;cam.y=.15",
+			"wav.type=1;wav.hue=.7;wav.a=.7;wav.h=1",
 			"fm1.s=s3;fm1.v=1;noise.s=crrr rrrr rrrr rrcr;noise.v=1",
 			"o1.s=c;o2.s=c;o3.s=c;o1.f=110.05;o2.f=109.97;o3.f=110.3",
 			"o5.s=+cd-e2ga+cd4eg+el8adl16cg+ed;o5.delay=1;o5.c=lfo128*6+1",
 			"master.g=0102030405060708",
+			"cam.a=1;cam.h=.3;cam.w=.2;cam.x=.9;cam.y=.15",
 			"cam.a=0;wav.a=0;wgl.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;fm1.s=;master.g=0",
-		];
+     		"wgl.a=0.7;wgl.type=6;wgl.hue=.2;wgl.h=1", 
+	];
 
 		function Trigger(instrument, accent, when) {
 			if (accent == 0)
@@ -340,14 +339,14 @@
 			delay = new Delay();
 
 			//Oscillator definitions
-			o1 = new Oscillator(110, 0.5, 1, out);
+			o1 = new Oscillator(110, 0.5, 0, out);
 			o2 = new Oscillator(110, 0.5, 1, out);
-			o3 = new Oscillator(110, 0.5, 1, out);
-			o4 = new Oscillator(110, 0.5, 1, out);
-			o5 = new Oscillator(220, 0.5, 1, out);
+			o3 = new Oscillator(110, 0.5, 2, out);
+			o4 = new Oscillator(110, 0.5, 3, out);
+			o5 = new Oscillator(220, 0.5, 0, out);
 			o6 = new Oscillator(220, 0.5, 1, out);
-			o7 = new Oscillator(440, 0.5, 1, out);
-			o8 = new Oscillator(440, 0.5, 1, out);
+			o7 = new Oscillator(440, 0.5, 2, out);
+			o8 = new Oscillator(440, 0.5, 3, out);
 
 		 	fm1 = new Fm_Oscillator(115,.5,.1,.8,451,.5,.02,2670,131,1,.1,1303,.5);
 		 	fm3 = new Fm_Oscillator(213,1,.04,.8,723,1,.6,2912,140,1,.1,800,.5);
@@ -368,7 +367,7 @@
 			window.document.addEventListener("mouseup", MouseEvent);
 
 			Reset();
-			cmds.message("livebeats - peal edition");
+			cmds.message("livebeats - pangrus edition");
 			cmds.message("");
 			cmds.message("type 'help' to get started");
 			cmds.message("press 'F1-F8' for some command examples");
@@ -547,6 +546,15 @@
 	        return r;
 		}
 
+		function saydesc() {
+			var r;
+			r  = "say.t  (text)" +"\n";
+			r += "say.r  (rate)" +"\n";
+			r += "say.p  (pitch)" +"\n";
+			r += "say.l  (loop)" +"\n";
+			return r;
+		}
+
 		function Parse0(s) {
 			function Parse1(l, r) {
 				var o = null;
@@ -641,6 +649,7 @@
 					case "master.v": master.v = r; break;
 					case "master.g": master.g = r; break;
 					case "master.t": master.t = r; break;
+                    case "bpm": master.tempo = r; break;
 					case "master.tempo": master.tempo = r; break;
 					case "master.rev": master.rev = r; break;
 					case "master.run": master.run = r; break;
@@ -872,6 +881,10 @@
 					r += "master.ir:" + master.ir + "\n";
 					return r;
 				}
+				if (text(p, "bpm")) {
+					r  = "bpm:" + master.tempo + "\n";
+					return r;
+				}
 				if (text(p, "delay")) {
 					r = "delay.t (time):" + delay.t + "\n";
 					r += "delay.fb (feedback):" + delay.fb + "\n";
@@ -901,22 +914,27 @@
 					return fmodesc(fm3, "fm3");
 				if (text(p, "fm4"))
 					return fmodesc(fm4, "fm4");
+				if (text(p, "say"))
+					return saydesc();
 				r = "\n";
 				r += "objects\n";
 				r += "  o1 o2 o3 o4 o5 o6 o7 o8  - oscillators\n";
 				r += "  fm1 fm2 fm3 fm4          - fm oscillators (Osc3>Osc2>Osc1)\n";
 				r += "  noise                    - noise\n";
 				r += "  say                      - speech synthesis\n";
-				r += "  master                   - master output control\n"
+				r += "  master                   - master output control\n";
+				r += " \n";
 				r += "variables\n";
 				r += "  tick                     - count up per tick (sixteenth note)\n";
 				r += "  sh8/sh16/sh32/sh64       - sample&hold\n";
 				r += "  lfo8/lfo16/lfo32/lfo64   - lfo\n";
 				r += "  s0-s24                   - pre-defined sequences\n";
-				r += "commands\n";
-				r += "  object.property=formula  - assign formula to object's property.\n";
-				r += "  list [object name]       - list object's properties.\n";
+				r += " \n";
+                r += "commands\n";
+				r += "  object.property=formula  - assign formula to object's property\n";
+				r += "  list [object name]       - list object's properties\n";
 				r += "  reset                    - reload page\n";
+				r += " \n";
 				r += "music macro language\n";
 				r += "  cdefgab                  - notes\n";
 				r += "  #                        - sharp\n";
@@ -925,6 +943,7 @@
 				r += "  - or >                   - lower octave\n";
 				r += "  o[n]                     - octave selection\n";
 				r += "  l[n]                     - note length\n";
+				r += " \n";
 				return r;
 			}
 			return null;
@@ -1056,7 +1075,7 @@
 			t -= mm * 60;
 			var ss = t | 0;
 			var ff = ((t - ss) * 30) | 0;
-			return ("00" + hh).substr(-2) + "h " + ("00" + mm).substr(-2) + "m " + ("00" + ss).substr(-2) + "s ";
+			return ("00" + hh).substr(-2) + " "+ ("00" + mm).substr(-2) + " " + ("00" + ss).substr(-2) + " ";
 		}
 		
 		function Automation_None(actx, param, v, t) {
@@ -1965,13 +1984,13 @@
 						this.log.length = this.rows;
 					}
 				}
-				this.log.unshift("- ");
+				this.log.unshift("> ");
 				this.dirty = 1;
 			}
 
 			this.key = function (k) {
 				if (k[0] == "f") {
-					this.log[0] = "- " + fn[k[1] - 1];
+					this.log[0] = "> " + fn[k[1] - 1];
 					this.cursor = this.log[0].length;
 					this.dirty = 1;
 					return;
@@ -2085,9 +2104,9 @@
 		}
 		function Start() {
 			audioctx.resume();
-			const s = document.getElementById("splash");
-			s.style.display = "none";
-			video.video.play();
+
+		
+	video.video.play();
 		}
 	</script>
 	
@@ -2095,14 +2114,10 @@
 	</div>
 	<div id="topmost" style="position:absolute;left:0px;top:0px;overflow:hidden">
 	</div>
-	<div id="splash">
-		<button style="display:block;position:absolute;left:40%;top:40%;width:20%;height:10%" onclick="Start()">Start</button>	
-		</div>
 	<input id="cmdline" onchange="CmdlineInput()"
 		style="display:none;width:100%;position:absolute;left:0;bottom:0;border:none" />
-
 		<div id="timecode"
-		style="position:absolute;border:none;margin:0px;padding:0px;right:2px;bottom:5px;width:115px;height:15px;color:#aaa;font-size:15px;font-family:courier">
+		style="position:absolute;border:none;margin:0px;padding:0px;right:2px;bottom:5px;width:115px;height:15px;color:#ee5;font-size:15px;font-family:courier">
 	</div>
 	<div id="urlpane">
 		<div style="width:90%;margin:auto">
