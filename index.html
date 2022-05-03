@@ -38,7 +38,7 @@
 
 <body onload="Init()" style="background:#000">
 	<script type="text/javascript" src="./plugin_txt.js"></script>
-	<script type="text/javascript" src="./plugin_wave.js"></script>
+	<script type="text/javascript" src="./plugin_wav.js"></script>
 	<script type="text/javascript" src="./plugin_cam.js"></script>
 	<script type="text/javascript" src="./plugin_wgl.js"></script>
 	<script type="text/javascript">
@@ -73,30 +73,17 @@
 		var cc = [0, 0, 0, 0, 0, 0, 0, 0];
 		var rand1 = rand2 = rand4 = 0;
 		var lev = 0;
-		var s0 = "pppppppppppppppp";
-		var s1 = "gpppgpppgpppgppp";
-		var s2 = "gpppggppgpgpggpg";
-		var s3 = "ppppppppgppppppp";
-		var s4 = "egeg+dgde";
-		var s5 = "l8egeg+dgde";
-		var s6 = "l1egeg";
-		var s7 = "epae2p+ggeeg-dpggppp";
-		var s8 = "epppeappp+gp-ppepfp";
-		var s9 = "ddddpp-papg2gggdddd";
-		var s10 = "gp+ppgp-papgpppg4ppg";
-		var s11 = "ddddaapppppppppppp";
-		var s12 = "eeeepa2pappd-dd4dpppp";
-		var s13 = "ddggpp+eeaeeggdpdp";
-		var s14 = "epppggpp2gp-ppaeepp";
-		var s15 = "epgpgp-gpepppd4appp";
-		var s16 = "ppppgpg+gppapp4epee";
-		var s17 = "gp2ppadp+epppg4pdpep";
-		var s18 = "eeee2papddee+ee4ppgg";
-		var s19 = "eppppppppppppppp";
-		var s20 = "gdeaag2e-gdeg4e+edgged";
-		var s21 = "dedggaa+eggegd4egeed";
-		var s23 = "gpg+dgpaag2de4pppebeb";
-		var s24 = "eepg4eepg-eeaapdeepd";
+
+		var s1 = "+c+dr-e;";
+		var s2 = "+cr++d-e2grarr;";
+		var s3 = "+cd1-e2ga++cr;";
+		var s4 = "+cd-e-2-gra++cdrr;";
+		var s5 = "+cd-e2-ga+c+d4e;";
+		var s6 = "+c1rd-e2rga++cdr4eg+e;";
+		var s7 = "+crrd-e-2ga+cd4eg+el8a;";
+		var s8 = "+cd-e2g-ar+cdr++4rerg+el8adl16c;";
+		var s9 = "+cd-e2rg-a+rcd4r+erg+el8ardl16cg+ed;";
+
 		var tick = 0;
 		var mouse = { "px": 0, "py": 0, "pz": 0 };
 		var nextTime = 0;
@@ -119,14 +106,14 @@
 		var midicb = [];
 
 		var fn = [
-			"wav.type=1;wav.hue=.7;wav.a=.7;wav.h=1",
-			"fm1.s=s3;fm1.v=1;noise.s=crrr rrrr rrrr rrcr;noise.v=1",
-			"o1.s=c;o2.s=c;o3.s=c;o1.f=110.05;o2.f=109.97;o3.f=110.3",
+			"wav.type=1;wav.hue=.7;wav.a=.7;wav.h=100",
+			"fm1.s=crrr;fm1.v=1;noise.s=crrr rrrr rrrr rrcr;noise.v=1",
+			"o1.s=c;o2.s=c;o3.s=c;o1.f=130.81;o2.f=130.97;o3.f=130.77",
 			"o5.s=+cd-e2ga+cd4eg+el8adl16cg+ed;o5.delay=1;o5.c=lfo128*6+1",
 			"master.g=0102030405060708",
 			"cam.a=1;cam.h=.3;cam.w=.2;cam.x=.9;cam.y=.15",
-			"cam.a=0;wav.a=0;wgl.a=0;o1.s=;o2.s=;o3.s=;o5.s=;noise.s=;fm1.s=;master.g=0",
-     		"wgl.a=0.7;wgl.type=6;wgl.hue=.2;wgl.h=1", 
+			"cam.a=0;wav.a=0;wgl.a=0;o1.s=;o2.s=;o3.s=o4.s=;o5.s=o6.s=o7.s=o8.s=;noise.s=;fm1.s=;master.g=0",
+            "o1.c=o2.c=o3.c=o4.c=6;o5.pan=lfo32;o6.pan=lfo64;",
 	];
 
 		function Trigger(instrument, accent, when) {
@@ -339,21 +326,21 @@
 			delay = new Delay();
 
 			//Oscillator definitions
-			o1 = new Oscillator(110, 0.5, 0, out);
-			o2 = new Oscillator(110, 0.5, 1, out);
-			o3 = new Oscillator(110, 0.5, 2, out);
-			o4 = new Oscillator(110, 0.5, 3, out);
-			o5 = new Oscillator(220, 0.5, 0, out);
-			o6 = new Oscillator(220, 0.5, 1, out);
-			o7 = new Oscillator(440, 0.5, 2, out);
-			o8 = new Oscillator(440, 0.5, 3, out);
+			o1 = new Oscillator(130.81, 0.5, 1, out);
+			o2 = new Oscillator(130.81, 0.5, 1, out);
+			o3 = new Oscillator(130.81, 0.5, 2, out);
+			o4 = new Oscillator(130.81, 0.5, 3, out);
+			o5 = new Oscillator(261.63, 0.5, 1, out);
+			o6 = new Oscillator(261.63, 0.5, 1, out);
+			o7 = new Oscillator(261.63, 0.5, 2, out);
+			o8 = new Oscillator(261.63, 0.5, 3, out);
 
 		 	fm1 = new Fm_Oscillator(115,.5,.1,.8,451,.5,.02,2670,131,1,.1,1303,.5);
 		 	fm3 = new Fm_Oscillator(213,1,.04,.8,723,1,.6,2912,140,1,.1,800,.5);
 			fm2 = new Fm_Oscillator(2233,1,.05,.5,423,1,.07,3120,552,1,.02,1800,.5);
 			fm4 = new Fm_Oscillator(100,2,.02,.4,3000,1,5,4000,.8,1,1,1400,.5);
 			
-			noise = new Noise(440, 0.8, out);
+			noise = new Noise(523, 0.8, out);
 			speech = new Speech();
 			cmds = new Commands();
 			video = new Video();
@@ -369,9 +356,7 @@
 			Reset();
 			cmds.message("livebeats - pangrus edition");
 			cmds.message("");
-    		cmds.message("original project by g200kg");
-	        cmds.message("");
-			cmds.message("type 'help' to get started");
+			cmds.message("type 'help' or 'list' to get started");
 	       	cmds.message("press 'F1-F8' for some command examples");
 			lastTime = 0;
 			document.addEventListener("dragover", DragOver, false);
@@ -380,7 +365,7 @@
 			//Caricamento plugin
 			console.log("Caricamento plugin");
 			_LoadPlugin("plugin_cam","cam","base");
-			_LoadPlugin("plugin_wave", "wav", "base");
+			_LoadPlugin("plugin_wav", "wav", "base");
 			_LoadPlugin("plugin_txt","txt","topmost");
 			_LoadPlugin("plugin_wgl","wgl","base");
 			setTimeout(WaitReady, 200);
@@ -929,7 +914,7 @@
 				r += "  tick                     - count up per tick (sixteenth note)\n";
 				r += "  sh8/sh16/sh32/sh64       - sample&hold\n";
 				r += "  lfo8/lfo16/lfo32/lfo64   - lfo\n";
-				r += "  s0-s24                   - pre-defined sequences\n";
+				r += "  s1-s9                    - pre-defined sequences\n";
 				r += " \n";
                 r += "commands\n";
 				r += "  object.property=formula  - assign formula to object's property\n";

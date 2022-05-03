@@ -152,20 +152,20 @@ plugin_cam = function(param){
 		uniform float rot;
 		uniform float alpha;
 		uniform float scale;
-		uniform float effposter;
-		uniform float effmotion;
-		uniform int effkaleido;
-		uniform float effmosaic;
-		uniform float effwave;
-		uniform float effdiv;
-		uniform float effhue;
-		uniform float effsat;
-		uniform float effcont;
-		uniform int effpointer;
-		uniform float effmelt;
-		uniform float efffilm;
-		uniform float effunsync;
-		uniform float effscan;
+		uniform float poster;
+		uniform float motion;
+		uniform int kaleido;
+		uniform float mosaic;
+		uniform float wave;
+		uniform float div;
+		uniform float hue;
+		uniform float sat;
+		uniform float cont;
+		uniform int pointer;
+		uniform float melt;
+		uniform float film;
+		uniform float unsync;
+		uniform float scan;
 		float rand(vec2 p){
 			return fract(sin(dot(p ,vec2(12.9898,78.233))) * 43758.5453);
 		}
@@ -197,8 +197,8 @@ plugin_cam = function(param){
 			float r=length(p);
 			return vec2(t,r);
 		}
-		vec2 melt(vec2 p){
-			return p+(vec2(smoothrand(p*30.),smoothrand(p*31.))-vec2(.5))*effmelt;
+		vec2 sciogli(vec2 p){
+			return p+(vec2(smoothrand(p*30.),smoothrand(p*31.))-vec2(.5))*melt;
 		}
 		void main() {
 			vec2 uv=(gl_FragCoord.xy/resolution.xy-.5);
@@ -207,14 +207,14 @@ plugin_cam = function(param){
 			uv=vec2(cos(th)*r,sin(th)*r);
 			uv+=.5;
 			float cr=0.;
-			if(effpointer==1){
+			if(pointer==1){
 				float r=cursor.z*0.08+0.01;
 				float dist=min(1.0,length(cursor.xy-uv));
 				float th=atan((cursor.y-uv.y)/(cursor.x-uv.x));
 				float fac=pow(1.02-(dist-r),20.0);
 				cr=fac*pow(abs(sin(th*4.0+time/100.0)),2.0*dist/r);
 			}
-			if(effpointer==2){
+			if(pointer==2){
 				float difx=abs(uv.x-cursor.x);
 				float dify=abs(uv.y-cursor.y);
 				float difxold=abs(uv.x-cursorold.x);
@@ -225,7 +225,7 @@ plugin_cam = function(param){
 				cr=max(cr,1.0-abs(sin(sin(time*.000121)/(.1+difyold))*difyold-(uv.x-cursorold.x)));
 				cr=pow(cr,136.);
 			}
-			if(effpointer==3){
+			if(pointer==3){
 				float r=cursor.z*0.05;
 				float fac=1.00002;
 				float dist=1.;
@@ -242,15 +242,15 @@ plugin_cam = function(param){
 				fac-=(dist);
 				cr=pow(fac,30.);
 			}
-			float mos=resolution.x/(effmosaic*64.0+1.0);
+			float mos=resolution.x/(mosaic*64.0+1.0);
 			uv=vec2(1.0)-uv;
-			if(effkaleido>=1) {
+			if(kaleido>=1) {
 				if(uv.x>0.5)
 					uv.x=1.0-uv.x;
-				if(effkaleido>=2) {
+				if(kaleido>=2) {
 					if(uv.y>0.5)
 						uv.y=1.0-uv.y;
-					if(effkaleido>=3)
+					if(kaleido>=3)
 						if(uv.y>uv.x) {
 							float t=uv.x;
 							uv.x=uv.y;
@@ -258,13 +258,13 @@ plugin_cam = function(param){
 						}
 				}
 			}
-			uv.x+=sin(uv.y*50.0+time*.005)*effwave*0.05;
-			uv=fract(uv*floor(1.5+effdiv));
+			uv.x+=sin(uv.y*50.0+time*.005)*wave*0.05;
+			uv=fract(uv*floor(1.5+div));
 			vec2 uv2=uv=floor(uv*mos)/mos;
 			float n1=max(0.,smoothrand(uv*12.+sin(floor(time*.024))*1231.21)-.95)*50.;
 			float n2=pow(smoothrand(uv.xx*42.+floor(time*.01)*12.),20.);
-			uv=uv+(vec2(smoothrand(uv*20.-time*.0011),smoothrand(uv*21.+time*.001))-vec2(.5))*effmelt*.1;
-			uv.y=mod(uv.y+(time/6000.)*effunsync,1.1);
+			uv=uv+(vec2(smoothrand(uv*20.-time*.0011),smoothrand(uv*21.+time*.001))-vec2(.5))*melt*.1;
+			uv.y=mod(uv.y+(time/6000.)*unsync,1.1);
 			vec4 colCur,colDiff;
 			if(uv.y>=1.0){
 				colCur=colDiff=vec4(0.);
@@ -274,27 +274,27 @@ plugin_cam = function(param){
 				colDiff=texture2D(textureDiff,uv);
 			}
 			float v=colDiff.x;
-			colCur*=(sin(uv.y*525.)*effscan+1.);
+			colCur*=(sin(uv.y*525.)*scan+1.);
 			vec3 hsv=rgb2hsv(colCur.xyz);
-			hsv.z-=(n1+n2)*efffilm;
-			hsv.x+=effhue;
-			hsv.y*=effsat;
-			hsv.z=(hsv.z-.5)*(effcont+1.)+.5;
+			hsv.z-=(n1+n2)*film;
+			hsv.x+=hue;
+			hsv.y*=sat;
+			hsv.z=(hsv.z-.5)*(cont+1.)+.5;
 			colCur=vec4(hsv2rgb(hsv),colCur.w);
-			float poststep=max(2.,12.-effposter*10.);
-			if(effposter<=0.01) poststep=256.;
+			float poststep=max(2.,12.-poster*10.);
+			if(poster<=0.01) poststep=256.;
 			colCur=floor(colCur*poststep)/poststep;
 			if(v>0.75) {
-				colCur.x+=(1.0-colCur.x)*effmotion;
-				colCur.y+=(1.0-colCur.y)*effmotion;
-				colCur.z+=(1.0-colCur.z)*(v-0.75)*4.0*effmotion;
+				colCur.x+=(1.0-colCur.x)*motion;
+				colCur.y+=(1.0-colCur.y)*motion;
+				colCur.z+=(1.0-colCur.z)*(v-0.75)*4.0*motion;
 			}
 			else if(v>0.5) {
-				colCur.x+=(1.0-colCur.x)*effmotion;
-				colCur.y+=(1.0-colCur.y)*(v-0.5)*4.0*effmotion;
+				colCur.x+=(1.0-colCur.x)*motion;
+				colCur.y+=(1.0-colCur.y)*(v-0.5)*4.0*motion;
 			}
 			else if(v>0.25) {
-				colCur.x+=(1.0-colCur.x)*(v-0.25)*4.0*effmotion;
+				colCur.x+=(1.0-colCur.x)*(v-0.25)*4.0*motion;
 			}
 			gl_FragColor=vec4(colCur.x+cr,colCur.y+cr,colCur.z+pow(cr,.5),1.0)*alpha;
 		}`;
@@ -476,20 +476,20 @@ plugin_cam = function(param){
   uniLocation.scr_rot = gl.getUniformLocation(this.prgscr,"rot");
   uniLocation.scr_alpha = gl.getUniformLocation(this.prgscr,"alpha");
   uniLocation.scr_scale = gl.getUniformLocation(this.prgscr,"scale");
-	uniLocation.scr_poster = gl.getUniformLocation(this.prgscr,"effposter");
-	uniLocation.scr_motion = gl.getUniformLocation(this.prgscr,"effmotion");
-	uniLocation.scr_kaleido = gl.getUniformLocation(this.prgscr,"effkaleido");
-	uniLocation.scr_pointer = gl.getUniformLocation(this.prgscr,"effpointer");
-	uniLocation.scr_mosaic = gl.getUniformLocation(this.prgscr,"effmosaic");
-	uniLocation.scr_wave = gl.getUniformLocation(this.prgscr,"effwave");
-	uniLocation.scr_div = gl.getUniformLocation(this.prgscr,"effdiv");
-	uniLocation.scr_hue = gl.getUniformLocation(this.prgscr,"effhue");
-	uniLocation.scr_sat = gl.getUniformLocation(this.prgscr,"effsat");
-	uniLocation.scr_cont = gl.getUniformLocation(this.prgscr,"effcont");
-	uniLocation.scr_film = gl.getUniformLocation(this.prgscr,"efffilm");
-	uniLocation.scr_melt = gl.getUniformLocation(this.prgscr,"effmelt");
-	uniLocation.scr_unsync = gl.getUniformLocation(this.prgscr,"effunsync");
-	uniLocation.scr_scan = gl.getUniformLocation(this.prgscr,"effscan");
+	uniLocation.scr_poster = gl.getUniformLocation(this.prgscr,"poster");
+	uniLocation.scr_motion = gl.getUniformLocation(this.prgscr,"motion");
+	uniLocation.scr_kaleido = gl.getUniformLocation(this.prgscr,"kaleido");
+	uniLocation.scr_pointer = gl.getUniformLocation(this.prgscr,"pointer");
+	uniLocation.scr_mosaic = gl.getUniformLocation(this.prgscr,"mosaic");
+	uniLocation.scr_wave = gl.getUniformLocation(this.prgscr,"wave");
+	uniLocation.scr_div = gl.getUniformLocation(this.prgscr,"div");
+	uniLocation.scr_hue = gl.getUniformLocation(this.prgscr,"hue");
+	uniLocation.scr_sat = gl.getUniformLocation(this.prgscr,"sat");
+	uniLocation.scr_cont = gl.getUniformLocation(this.prgscr,"cont");
+	uniLocation.scr_film = gl.getUniformLocation(this.prgscr,"film");
+	uniLocation.scr_melt = gl.getUniformLocation(this.prgscr,"melt");
+	uniLocation.scr_unsync = gl.getUniformLocation(this.prgscr,"unsync");
+	uniLocation.scr_scan = gl.getUniformLocation(this.prgscr,"scan");
 	gl.activeTexture(gl.TEXTURE0);
 	this.textureCur=this.createVideoTexture(this.video);
 	this.texturePre=this.createVideoTexture(this.video);
@@ -505,22 +505,22 @@ plugin_cam = function(param){
 	"q":{"value":5,"type":"double","min":0,"max":100},
 	"porta":{"value":0.5,"type":"double","min":0,"max":1},
 	"delay":{"value":0.4,"type":"double","min":0,"max":1},
-	"scale":{"value":"cdega<cdega<c","type":"string"},
-	"effkaleido":{"value":0, "type":"int", "min":0, "max":3},
-	"effpointer":{"value":0, "type":"int", "min":0, "max":3},
-	"effposter":{"value":0, "type":"double","min":0,"max":1},
-	"effmotion":{"value":0, "type":"double","min":0,"max":1},
-	"effmosaic":{"value":0, "type":"double","min":0,"max":1},
-	"effface":{"value":0, "type":"int", "min":0,"max":1},
-	"effwave":{"value":0, "type":"double","min":0,"max":1},
-	"effdiv":{"value":0, "type":"int","min":0, "max":10},
-	"effhue":{"value":0, "type":"double","min":-4, "max":4},
-	"effsat":{"value":1, "type":"double","min":0, "max":1},
-	"effcont":{"value":0, "type":"double","min":0, "max":1},
-	"effmelt":{"value":0, "type":"double","min":0, "max":1},
-	"efffilm":{"value":0, "type":"double","min":0, "max":1},
-	"effunsync":{"value":0, "type":"double","min":0, "max":1},
-	"effscan":{"value":0, "type":"double","min":0, "max":1},
+	"scale":{"value":"cg+c+g","type":"string"},
+	"kaleido":{"value":0, "type":"int", "min":0, "max":3},
+	"pointer":{"value":0, "type":"int", "min":0, "max":3},
+	"poster":{"value":0, "type":"double","min":0,"max":1},
+	"motion":{"value":0, "type":"double","min":0,"max":1},
+	"mosaic":{"value":0, "type":"double","min":0,"max":1},
+	"face":{"value":0, "type":"int", "min":0,"max":1},
+	"wave":{"value":0, "type":"double","min":0,"max":1},
+	"div":{"value":0, "type":"int","min":0, "max":10},
+	"hue":{"value":0, "type":"double","min":-4, "max":4},
+	"sat":{"value":1, "type":"double","min":0, "max":1},
+	"cont":{"value":0, "type":"double","min":0, "max":1},
+	"melt":{"value":0, "type":"double","min":0, "max":1},
+	"film":{"value":0, "type":"double","min":0, "max":1},
+	"unsync":{"value":0, "type":"double","min":0, "max":1},
+	"scan":{"value":0, "type":"double","min":0, "max":1},
 	"px":{"value":0,"type":"double","min":0,"max":1},
 	"py":{"value":0,"type":"double","min":0,"max":1},
 	"pz":{"value":0,"type":"double","min":0,"max":1},
@@ -620,20 +620,20 @@ plugin_cam = function(param){
         gl.uniform1f(uniLocation.scr_rot,this.param.rot.value);
         gl.uniform1f(uniLocation.scr_alpha,this.param.a.value);
         gl.uniform1f(uniLocation.scr_scale,this.param.z.value);
-		gl.uniform1f(uniLocation.scr_poster,this.param.effposter.value);
-		gl.uniform1f(uniLocation.scr_motion,this.param.effmotion.value);
-		gl.uniform1i(uniLocation.scr_kaleido,this.param.effkaleido.value);
-		gl.uniform1i(uniLocation.scr_pointer,this.param.effpointer.value);
-		gl.uniform1f(uniLocation.scr_mosaic,this.param.effmosaic.value);
-		gl.uniform1f(uniLocation.scr_wave,this.param.effwave.value);
-		gl.uniform1f(uniLocation.scr_div,this.param.effdiv.value);
-		gl.uniform1f(uniLocation.scr_hue,this.param.effhue.value);
-		gl.uniform1f(uniLocation.scr_sat,this.param.effsat.value);
-		gl.uniform1f(uniLocation.scr_cont,this.param.effcont.value);
-		gl.uniform1f(uniLocation.scr_melt,this.param.effmelt.value);
-		gl.uniform1f(uniLocation.scr_film,this.param.efffilm.value);
-		gl.uniform1f(uniLocation.scr_unsync,this.param.effunsync.value);
-		gl.uniform1f(uniLocation.scr_scan,this.param.effscan.value);
+		gl.uniform1f(uniLocation.scr_poster,this.param.poster.value);
+		gl.uniform1f(uniLocation.scr_motion,this.param.motion.value);
+		gl.uniform1i(uniLocation.scr_kaleido,this.param.kaleido.value);
+		gl.uniform1i(uniLocation.scr_pointer,this.param.pointer.value);
+		gl.uniform1f(uniLocation.scr_mosaic,this.param.mosaic.value);
+		gl.uniform1f(uniLocation.scr_wave,this.param.wave.value);
+		gl.uniform1f(uniLocation.scr_div,this.param.div.value);
+		gl.uniform1f(uniLocation.scr_hue,this.param.hue.value);
+		gl.uniform1f(uniLocation.scr_sat,this.param.sat.value);
+		gl.uniform1f(uniLocation.scr_cont,this.param.cont.value);
+		gl.uniform1f(uniLocation.scr_melt,this.param.melt.value);
+		gl.uniform1f(uniLocation.scr_film,this.param.film.value);
+		gl.uniform1f(uniLocation.scr_unsync,this.param.unsync.value);
+		gl.uniform1f(uniLocation.scr_scan,this.param.scan.value);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0,4);
 		gl.flush();
 		var c=((this.notes[this.px*this.notes.length|0]-57)+(master.tunparam-5))*100;
@@ -651,7 +651,7 @@ plugin_cam = function(param){
 			this.Osc.SetFormant(f1,f2);
 			this.Osc.SetDelayLevel(this.param.delay.value);
 			if(this.facectx)
-				this.DrawFace(this.facectx, this.param.effface.value,this.px*256, 256-this.py*256, this.pz*.5, [f1*2.5,f2/2,this.px*5]);
+				this.DrawFace(this.facectx, this.param.face.value,this.px*256, 256-this.py*256, this.pz*.5, [f1*2.5,f2/2,this.px*5]);
 		}
 	};
 	this.ready=1;

@@ -49,11 +49,16 @@ plugin_txt = function(param) {
 			this.ctx.fillRect(m+12,this.yheight-this.mry+4,this.mrx|0,this.mry);
 		}
 	};
-	this.param={
+
+this.param={
 		"a":{"value":1,"type":"double"},
 		"col":{"value":"#ee5","type":"string"},
-		"h":{"value":1,"type":"double"},
-		"w":{"value":1,"type":"double"},
-	    "x":{"value":0.8,"type":"double"},
-	};
-}
+		"h":{"value":1.2,"type":"double"},
+		"w":{"value":1.2,"type":"double"},
+	    "x":{"value":0.7,"type":"double"},
+	    "y":{"value":0.56,"type":"double"},
+    };
+};
+
+
+
