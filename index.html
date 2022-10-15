@@ -2088,34 +2088,33 @@
 				navigator.mediaDevices.getUserMedia({ video: { deviceId: this.cam[n] }, audio: false }).then(success.bind(this), err);
 			};
 		}
-		function Start() {
-			audioctx.resume();
-
-		
+function Start(){
+	audioctx.resume();
+	const s=document.getElementById("splash");
+	s.style.display="none";
 	video.video.play();
-		}
-	</script>
-	
-    <div id="base" style="position:absolute;left:0px;top:0px;background:#000;overflow:hidden">
+}
+</script>
+<div id="base" style="position:absolute;left:0px;top:0px;background:#000;overflow:hidden">
+</div>
+<div id="topmost" style="position:absolute;left:0px;top:0px;overflow:hidden">
+</div>
+<div id="splash">
+<button style="display:block;position:absolute;left:25%;top:40%;width:50%;height:20%" onclick="Start()">Start</button>	
+</div>
+<input id="cmdline" onchange="CmdlineInput()" style="display:none;width:100%;position:absolute;left:0;bottom:0;border:none"/>
+<div id="timecode" style="position:absolute;border:none;margin:0px;padding:0px;right:2px;bottom:5px;width:120px;height:20px;color:#aaa;font-size:20px;font-family:courier"></div>
+<div id="urlpane">
+	<div style="width:90%;margin:auto">
+		<textarea id="url">
+		</textarea><br/>
+		<input type="checkbox"/>Use WebCam<br/>
+		<button onclick="document.getElementById('urlpane').style.display='none';">Close</button>
 	</div>
-	<div id="topmost" style="position:absolute;left:0px;top:0px;overflow:hidden">
-	</div>
-	<input id="cmdline" onchange="CmdlineInput()"
-		style="display:none;width:100%;position:absolute;left:0;bottom:0;border:none" />
-		<div id="timecode"
-		style="position:absolute;border:none;margin:0px;padding:0px;right:2px;bottom:5px;width:115px;height:15px;color:#ee5;font-size:15px;font-family:courier">
-	</div>
-	<div id="urlpane">
-		<div style="width:90%;margin:auto">
-			<textarea id="url">
-		</textarea><br />
-			<input type="checkbox" />Use WebCam<br />
-			<button onclick="document.getElementById('urlpane').style.display='none';">Close</button>
-		</div>
-	</div>
-	<div style="display:none">
-		<video id="video" width="1" height="1"></video>
-	</div>
+</div>
+<div style="display:none">
+	<video id="video" width="1" height="1"></video>
+<!--	<canvas id="cvcamwork" width="256" height="256"></canvas>-->
+</div>
 </body>
-
 </html>
